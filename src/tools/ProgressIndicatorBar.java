@@ -60,3 +60,4 @@ public class ProgressIndicatorBar extends StackPane {
 
   }
 }
+
