@@ -78,10 +78,11 @@ public class DigitalClock extends Application {
     private Clock clock;
     ImageView background;
     ImageView hiddenbackground;
-    
+    String hiddenbackgroundName; // = "scale.jpeg";
+
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Digital Clock v4");
+        primaryStage.setTitle("Digital Clock v5");
         Group root = new Group();
         
         root.getStylesheets().add(getClass().getResource("progress.css").toExternalForm());
@@ -96,6 +97,7 @@ public class DigitalClock extends Application {
         clock.setLayoutY(186);
         clock.getTransforms().add(new Scale(0.83f, 0.83f, 0, 0));
         // add background and clock to sample
+        hiddenbackground = new ImageView(new Image(getClass().getResourceAsStream(hiddenbackgroundName)));
         root.getChildren().addAll(hiddenbackground, background, clock);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -128,6 +130,8 @@ public class DigitalClock extends Application {
                 endDate = sdf.parse(strEndDate);
                 String strStartDate = prop.getProperty("strStartDate", "2016-02-26 17:00:00");
                 startDate = sdf.parse(strStartDate);
+                String finishImageName = prop.getProperty("finishImageName", "scale.jpeg");
+                dc.hiddenbackgroundName = finishImageName;
             } catch (Exception e) {
                 calendar.set(2016, Calendar.MARCH, 7, 8, 0, 0);
                 endDate = calendar.getTime();
