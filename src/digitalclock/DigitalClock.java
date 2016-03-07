@@ -31,8 +31,12 @@
  */
 package digitalclock;
 
+import java.io.FileInputStream;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Properties;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -77,7 +81,7 @@ public class DigitalClock extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Digital Clock v3.1");
+        primaryStage.setTitle("Digital Clock v4");
         Group root = new Group();
         
         root.getStylesheets().add(getClass().getResource("progress.css").toExternalForm());
@@ -109,16 +113,33 @@ public class DigitalClock extends Application {
         final ReadOnlyDoubleWrapper workDone  = new ReadOnlyDoubleWrapper();
         final ProgressIndicatorBar pib = new ProgressIndicatorBar(workDone.getReadOnlyProperty(), 100.0, "%.4f%%");
         DigitalClock dc;
+
+        private Date startDate;
         private Date endDate;
-        
+
         public Clock(Color onColor, Color offColor, DigitalClock dc) {
-            calendar.set(2015, 10-1, 19, 8, 0, 0);
+            //try reading end-date from file
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Properties prop = new Properties();
+            try {
+//                prop.load(new FileInputStream("app.ini"));
+                prop.load(this.getClass().getResourceAsStream("app.ini"));
+                String strEndDate = prop.getProperty("strEndDate", "2016-03-07 07:45:00");
+                endDate = sdf.parse(strEndDate);
+                String strStartDate = prop.getProperty("strStartDate", "2016-02-26 17:00:00");
+                startDate = sdf.parse(strStartDate);
+            } catch (Exception e) {
+                calendar.set(2016, Calendar.MARCH, 7, 8, 0, 0);
+                endDate = calendar.getTime();
+                calendar.set(2016, Calendar.FEBRUARY, 26, 17, 0, 0);
+                startDate = calendar.getTime();
+            }
+                /*
             long longThen = calendar.getTimeInMillis();
             long longNow = System.currentTimeMillis();
-            endDate = calendar.getTime();
+
             if (longThen < longNow) {
                 //popup ask for endDate
-                /*
                 final TextField txUserName = new TextField();
 final PasswordField txPassword = new PasswordField();
 final Action actionLogin = new DialogAction("Login", ButtonType.OK_DONE){
@@ -157,7 +178,6 @@ validate();
  
 Action response = dlg.show();
 System.out.println("response: " + response);
-                */
                 System.out.println("*** past");
                 Stage dialog = new Stage();
                 dialog.initStyle(StageStyle.UTILITY);
@@ -167,7 +187,8 @@ System.out.println("response: " + response);
             } else {
                 System.out.println("*** future");
             }
-            
+                */
+
             //lifeline
             this.dc = dc;
             // create effect for on LEDs
@@ -219,13 +240,13 @@ System.out.println("response: " + response);
             int hours = calendar.get(Calendar.HOUR_OF_DAY);
             int minutes = calendar.get(Calendar.MINUTE);
             int seconds = calendar.get(Calendar.SECOND);
-            
-            calendar.set(2015, 10-1, 19, 8, 0, 0);
-            //calendar.set(2015, 10-1, 18, 21, 17, 0);
+
+            calendar.setTime(endDate);
             long longThen = calendar.getTimeInMillis();
-                    
-            calendar.set(2015, 9-1, 14, 07, 45, 0);
+
+            calendar.setTime(startDate);
             long longFrom = calendar.getTimeInMillis();
+
             long longLapse = longThen - longFrom;
                     
             long time = longThen - longNow;
