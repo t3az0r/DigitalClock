@@ -83,7 +83,7 @@ public class DigitalClock extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Digital Clock v5");
+        primaryStage.setTitle("Digital Clock v6beta");
         Group root = new Group();
         
         root.getStylesheets().add(getClass().getResource("progress.css").toExternalForm());
