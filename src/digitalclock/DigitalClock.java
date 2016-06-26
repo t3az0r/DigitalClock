@@ -78,6 +78,7 @@ public class DigitalClock extends Application {
     private Clock clock;
     ImageView background;
     ImageView hiddenbackground;
+    ImageView[] intermissionbackgrounds = new ImageView[7];
     String hiddenbackgroundName; // = "scale.jpeg";
 
     @Override
@@ -97,8 +98,10 @@ public class DigitalClock extends Application {
         clock.setLayoutY(186);
         clock.getTransforms().add(new Scale(0.83f, 0.83f, 0, 0));
         // add background and clock to sample
+        intermissionbackgrounds[0] = new ImageView(new Image(getClass().getResourceAsStream("intermission/turtle.gif")));
+
         hiddenbackground = new ImageView(new Image(getClass().getResourceAsStream(hiddenbackgroundName)));
-        root.getChildren().addAll(hiddenbackground, background, clock);
+        root.getChildren().addAll(hiddenbackground, background, intermissionbackgrounds[0], clock);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -126,9 +129,9 @@ public class DigitalClock extends Application {
             try {
 //                prop.load(new FileInputStream("app.ini"));
                 prop.load(this.getClass().getResourceAsStream("app.ini"));
-                String strEndDate = prop.getProperty("strEndDate", "2016-03-07 07:45:00");
+                String strEndDate = prop.getProperty("strEndDate", "2016-07-21 07:45:00");
                 endDate = sdf.parse(strEndDate);
-                String strStartDate = prop.getProperty("strStartDate", "2016-02-26 17:00:00");
+                String strStartDate = prop.getProperty("strStartDate", "2016-06-28 17:00:00");
                 startDate = sdf.parse(strStartDate);
                 String finishImageName = prop.getProperty("finishImageName", "scale.jpeg");
                 dc.hiddenbackgroundName = finishImageName;
