@@ -98,10 +98,37 @@ public class DigitalClock extends Application {
         clock.setLayoutY(186);
         clock.getTransforms().add(new Scale(0.83f, 0.83f, 0, 0));
         // add background and clock to sample
-        intermissionbackgrounds[0] = new ImageView(new Image(getClass().getResourceAsStream("intermission/turtle.gif")));
+        intermissionbackgrounds[0] = new ImageView(new Image(getClass().getResourceAsStream("intermission/ballon.jpeg")));
+        intermissionbackgrounds[1] = new ImageView(new Image(getClass().getResourceAsStream("intermission/banana.jpg")));
+        intermissionbackgrounds[2] = new ImageView(new Image(getClass().getResourceAsStream("intermission/fish.png")));
+        intermissionbackgrounds[3] = new ImageView(new Image(getClass().getResourceAsStream("intermission/hug.jpg")));
+        intermissionbackgrounds[4] = new ImageView(new Image(getClass().getResourceAsStream("intermission/lover.jpg")));
+        intermissionbackgrounds[5] = new ImageView(new Image(getClass().getResourceAsStream("intermission/snakes.jpeg")));
+        intermissionbackgrounds[6] = new ImageView(new Image(getClass().getResourceAsStream("intermission/turtle.gif")));
 
+        
+        
         hiddenbackground = new ImageView(new Image(getClass().getResourceAsStream(hiddenbackgroundName)));
-        root.getChildren().addAll(hiddenbackground, background, intermissionbackgrounds[0], clock);
+        root.getChildren().addAll(
+                hiddenbackground, 
+                background, 
+                intermissionbackgrounds[0], 
+                intermissionbackgrounds[1], 
+                intermissionbackgrounds[2], 
+                intermissionbackgrounds[3], 
+                intermissionbackgrounds[4], 
+                intermissionbackgrounds[5], 
+                intermissionbackgrounds[6], 
+                clock);
+        
+        intermissionbackgrounds[0].setVisible(false);
+        intermissionbackgrounds[1].setVisible(false);
+        intermissionbackgrounds[2].setVisible(false);
+        intermissionbackgrounds[3].setVisible(false);
+        intermissionbackgrounds[4].setVisible(false);
+        intermissionbackgrounds[5].setVisible(false);
+        intermissionbackgrounds[6].setVisible(false);
+        
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -121,6 +148,7 @@ public class DigitalClock extends Application {
 
         private Date startDate;
         private Date endDate;
+        private int intermissionDuration;
 
         public Clock(Color onColor, Color offColor, DigitalClock dc) {
             //try reading end-date from file
@@ -135,6 +163,9 @@ public class DigitalClock extends Application {
                 startDate = sdf.parse(strStartDate);
                 String finishImageName = prop.getProperty("finishImageName", "scale.jpeg");
                 dc.hiddenbackgroundName = finishImageName;
+                String strIntermissionDuration = prop.getProperty("intermissionDuration", "5");
+                intermissionDuration = Integer.parseInt(strIntermissionDuration);
+                System.out.println("intermissionDuration:"+intermissionDuration);
             } catch (Exception e) {
                 calendar.set(2016, Calendar.MARCH, 7, 8, 0, 0);
                 endDate = calendar.getTime();
@@ -276,8 +307,17 @@ System.out.println("response: " + response);
             time -= minutes * 60 * 1000;
             System.out.println(""+time);
             seconds = (int) (time / 1000);
-            
+
             System.out.println(""+hours+":"+minutes+":"+seconds);
+
+            System.out.println("ten: " + hours%10 + " min: " + minutes);
+            
+            if(9 == hours%10 && minutes >= (60 - intermissionDuration)) {
+                dc.startIntermission(hours);
+            } else {
+                dc.stopIntermission();
+            }
+            
             digits[0].showNumber(hours / 100);
             hours %= 100;
             digits[0+1].showNumber(hours / 10);
@@ -321,6 +361,7 @@ System.out.println("response: " + response);
             }
             dc.finish();
         }
+
     }
 
     /**
@@ -369,6 +410,43 @@ System.out.println("response: " + response);
             }
         }
     }
+
+    void startIntermission(int hours) {
+        System.out.println("**** "+hours);
+        if(hiddenbackground != null)hiddenbackground.setVisible(false);
+        if (null != background) background.setVisible(false);
+        if(clock != null) clock.setVisible(false);
+        int index = hours%7;
+        System.out.println("**** "+index);
+
+        if (null != intermissionbackgrounds[6]) {
+            intermissionbackgrounds[0].setVisible(false);
+            intermissionbackgrounds[1].setVisible(false);
+            intermissionbackgrounds[2].setVisible(false);
+            intermissionbackgrounds[3].setVisible(false);
+            intermissionbackgrounds[4].setVisible(false);
+            intermissionbackgrounds[5].setVisible(false);
+            intermissionbackgrounds[6].setVisible(false);
+
+            intermissionbackgrounds[index].setVisible(true);
+        }
+    }
+
+    void stopIntermission() {
+        if(hiddenbackground != null) hiddenbackground.setVisible(true);
+        if (null != background) background.setVisible(true);
+        if(clock != null) clock.setVisible(true);
+        if (null != intermissionbackgrounds[6]) {
+            intermissionbackgrounds[0].setVisible(false);
+            intermissionbackgrounds[1].setVisible(false);
+            intermissionbackgrounds[2].setVisible(false);
+            intermissionbackgrounds[3].setVisible(false);
+            intermissionbackgrounds[4].setVisible(false);
+            intermissionbackgrounds[5].setVisible(false);
+            intermissionbackgrounds[6].setVisible(false);
+        }
+    }
+
 
     void finish() {
         background.setVisible(false);
