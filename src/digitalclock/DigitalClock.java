@@ -31,16 +31,26 @@
  */
 package digitalclock;
 
+import digitalclock.imageshader.PuzzlePiece;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -75,15 +85,23 @@ import tools.ProgressIndicatorBar;
  */
 public class DigitalClock extends Application {
 
+    private static final Logger logger = Logger.getLogger(DigitalClock.class.getName());
+    
     private Clock clock;
     ImageView background;
     ImageView hiddenbackground;
     ImageView[] intermissionbackgrounds = new ImageView[7];
-    String hiddenbackgroundName; // = "scale.jpeg";
-
+    String hiddenbackgroundName;
+    List<ImageView> puzzlePieces = new ArrayList<ImageView>();
+    String puzzleBackgroundFileName;
+    ImageView puzzleBackground;
+    
+    Integer puzzleColumns = 8;
+    Integer puzzleRows = 6;
+    
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Digital Clock v6beta");
+        primaryStage.setTitle("Digital Clock v7beta");
         Group root = new Group();
         
         root.getStylesheets().add(getClass().getResource("progress.css").toExternalForm());
@@ -128,7 +146,25 @@ public class DigitalClock extends Application {
         intermissionbackgrounds[4].setVisible(false);
         intermissionbackgrounds[5].setVisible(false);
         intermissionbackgrounds[6].setVisible(false);
+
+        puzzleBackground = new ImageView(new Image(getClass().getResourceAsStream(puzzleBackgroundFileName), 480, 412, false, true));
+        root.getChildren().add(puzzleBackground);
         
+        for(int i = 0; i < puzzleColumns; i++) {
+            for(int j = 0; j < puzzleRows; j++) {
+                PuzzlePiece puzzlePiece = new PuzzlePiece(480, 412, puzzleColumns, puzzleRows, i, j);
+                Image puzzleImage = SwingFXUtils.toFXImage(puzzlePiece, null);
+                final ImageView puzzleImageView = new ImageView(puzzleImage);
+/*
+                if ((i+j)%2 == 0) {
+                    puzzleImageView.setVisible(false);
+                }
+  */            
+                puzzlePieces.add(puzzleImageView);
+                root.getChildren().add(puzzleImageView);
+            }
+        }
+        Collections.shuffle(puzzlePieces);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -161,8 +197,14 @@ public class DigitalClock extends Application {
                 endDate = sdf.parse(strEndDate);
                 String strStartDate = prop.getProperty("strStartDate", "2016-06-28 17:00:00");
                 startDate = sdf.parse(strStartDate);
-                String finishImageName = prop.getProperty("finishImageName", "scale.jpeg");
+                String finishImageName = prop.getProperty("finishImageName", "finish.jpg");
                 dc.hiddenbackgroundName = finishImageName;
+                
+                String puzzleBackgroundName = prop.getProperty("puzzleBackground", "scale.jpeg");
+                dc.puzzleBackgroundFileName = puzzleBackgroundName;
+                dc.puzzleColumns = Integer.parseInt(prop.getProperty("puzzleColumns", "8"));
+                dc.puzzleRows = Integer.parseInt(prop.getProperty("puzzleRows", "6"));
+
                 String strIntermissionDuration = prop.getProperty("intermissionDuration", "5");
                 intermissionDuration = Integer.parseInt(strIntermissionDuration);
                 System.out.println("intermissionDuration:"+intermissionDuration);
@@ -295,6 +337,7 @@ System.out.println("response: " + response);
             tooltip.setText(String.valueOf(100.0f * progress)+"%");
             
             if(remainder < 0) {
+                dc.solvePuzzle();
                 stop();
                 return;
             }
@@ -316,6 +359,12 @@ System.out.println("response: " + response);
                 dc.startIntermission(hours);
             } else {
                 dc.stopIntermission();
+            }
+            
+            if(progress < 0.5f) {
+                dc.reducePuzzle(progress);
+            } else {
+                dc.solvePuzzle();
             }
             
             digits[0].showNumber(hours / 100);
@@ -407,6 +456,38 @@ System.out.println("response: " + response);
             for (int i = 0; i < 7; i++) {
                 polygons[i].setFill(DIGIT_COMBINATIONS[num][i] ? onColor : offColor);
                 polygons[i].setEffect(DIGIT_COMBINATIONS[num][i] ? onEffect : offEffect);
+            }
+        }
+    }
+
+    void resetPuzzle() {
+        for(ImageView pp : puzzlePieces) {
+            pp.setVisible(true);
+        }
+        if(null != puzzleBackground)
+            puzzleBackground.setVisible(true);
+    }
+
+    void solvePuzzle() {
+        for(ImageView pp : puzzlePieces) {
+            pp.setVisible(false);
+        }
+        if(null != puzzleBackground)
+            puzzleBackground.setVisible(false);
+    }
+
+    void reducePuzzle(float progress) {
+        int n = puzzlePieces.size();
+        if (n > 0) {
+            int k = (int) (n * progress * 2.0);
+            logger.info("p%:"+progress+"; n:"+n+"; k:"+k);
+            if (k >= 0 && k < n) {
+                for(int i = 0; i < k; i++) {
+                    puzzlePieces.get(i).setVisible(false);
+                }
+            }
+            if(k >= n) {
+                solvePuzzle();
             }
         }
     }
