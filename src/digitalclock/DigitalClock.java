@@ -98,10 +98,11 @@ public class DigitalClock extends Application {
     
     Integer puzzleColumns = 8;
     Integer puzzleRows = 6;
+    private static String VERSION = "v8beta";
     
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Digital Clock v7beta");
+        primaryStage.setTitle("Digital Clock " + VERSION);
         Group root = new Group();
         
         root.getStylesheets().add(getClass().getResource("progress.css").toExternalForm());
@@ -109,7 +110,7 @@ public class DigitalClock extends Application {
         Scene scene = new Scene(root, 480, 412);
         // add background image
         background = new ImageView(new Image(getClass().getResourceAsStream("DigitalClock-background.png")));
-        hiddenbackground = new ImageView(new Image(getClass().getResourceAsStream("finish.jpg")));
+        hiddenbackground = new ImageView(new Image(getClass().getResourceAsStream("finish.jpg"), 480, 412, false, true));
         // add digital clock
         clock = new Clock(Color.ORANGERED, Color.rgb(50,50,50), this);
         clock.setLayoutX(45);
