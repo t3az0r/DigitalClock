@@ -35,6 +35,7 @@ import digitalclock.imageshader.PuzzlePiece;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -102,7 +103,15 @@ public class DigitalClock extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Digital Clock " + VERSION);
+        Properties prop = new Properties();
+        String strVersion = VERSION;
+        try {
+            prop.load(this.getClass().getResourceAsStream("app.ini"));
+            strVersion = prop.getProperty("version", VERSION);
+        } catch (IOException ex) {
+            Logger.getLogger(DigitalClock.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        primaryStage.setTitle("Digital Clock " + strVersion);
         Group root = new Group();
         
         root.getStylesheets().add(getClass().getResource("progress.css").toExternalForm());
@@ -483,12 +492,9 @@ System.out.println("response: " + response);
             int k = (int) (n * progress * 2.0);
             logger.info("p%:"+progress+"; n:"+n+"; k:"+k);
             if (k >= 0 && k < n) {
-                for(int i = 0; i < k; i++) {
+                for(int i = 0; i <= k; i++) {
                     puzzlePieces.get(i).setVisible(false);
                 }
-            }
-            if(k >= n) {
-                solvePuzzle();
             }
         }
     }
