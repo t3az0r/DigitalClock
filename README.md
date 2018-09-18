@@ -1,4 +1,4 @@
 # DigitalClock
 
-use master
-use NB 8.2
+- use master
+- use NB 8.2
