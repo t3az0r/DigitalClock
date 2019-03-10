@@ -88,6 +88,8 @@ public class DigitalClock extends Application {
 
     private static final Logger logger = Logger.getLogger(DigitalClock.class.getName());
     
+    private static Stage pStage = null;
+
     private Clock clock;
     ImageView background;
     ImageView hiddenbackground;
@@ -95,23 +97,24 @@ public class DigitalClock extends Application {
     String hiddenbackgroundName;
     List<ImageView> puzzlePieces = new ArrayList<ImageView>();
     String puzzleBackgroundFileName;
-    ImageView puzzleBackground;
-    
+    ImageView puzzleBackground;    
     Integer puzzleColumns = 8;
     Integer puzzleRows = 6;
-    private static String VERSION = "v8beta";
+    
     
     @Override
     public void start(Stage primaryStage) {
+        pStage = primaryStage;
         Properties prop = new Properties();
-        String strVersion = VERSION;
+        String strVersion = "XXX";
         try {
             prop.load(this.getClass().getResourceAsStream("app.ini"));
-            strVersion = prop.getProperty("version", VERSION);
+            strVersion = prop.getProperty("version", "XXX");
         } catch (IOException ex) {
             Logger.getLogger(DigitalClock.class.getName()).log(Level.SEVERE, null, ex);
         }
         primaryStage.setTitle("Digital Clock " + strVersion);
+        primaryStage.setResizable(false);
         Group root = new Group();
         
         root.getStylesheets().add(getClass().getResource("progress.css").toExternalForm());
@@ -539,6 +542,7 @@ System.out.println("response: " + response);
     void finish() {
         background.setVisible(false);
         if(clock != null) clock.setVisible(false);
+        pStage.setResizable(true);
     }
     
     /**
