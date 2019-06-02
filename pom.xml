@@ -1,0 +1,79 @@
+<!--
+
+This is a minimal configuration for a JavaFX 8 maven project.
+
+For more information please access fxapps.blogspot.com
+
+by: William Siqueira
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<!-- change it according your app configuration -->
+	<groupId>org.kacie</groupId>
+	<artifactId>digitalclock</artifactId>
+	<version>10.1</version>
+	<properties>
+		<!-- The final name for the JAR that you can find in target directory-->
+		<jar.final.name>DigitalClock_v${version}</jar.final.name>
+		<!--  the default class that has the public static void main(String[]) method -->
+		<main.class>digitalclock.DigitalClock</main.class>
+	</properties>
+	<dependencies>
+		<!-- Add your dependencies here
+    <dependency>
+      <groupId>{groupId}</groupId>
+      <artifactId>{artifactIT}</artifactId>
+      <version>{version}</version>
+    </dependency>
+   -->
+   </dependencies>
+   <build>
+	   <finalName>${jar.final.name}</finalName>
+	   <plugins>
+		   <plugin>
+			   <groupId>org.apache.maven.plugins</groupId>
+			   <artifactId>maven-compiler-plugin</artifactId>
+			   <version>2.3.2</version>
+			   <configuration>
+				   <source>1.8</source>
+				   <target>1.8</target>
+			   </configuration>
+		   </plugin>
+		   <plugin>
+			   <groupId>org.apache.maven.plugins</groupId>
+			   <artifactId>maven-jar-plugin</artifactId>
+			   <version>2.4</version>
+			   <configuration>
+				   <archive>
+					   <manifest>
+						   <addClasspath>true</addClasspath>
+						   <mainClass>${main.class}</mainClass>
+					   </manifest>
+				   </archive>
+			   </configuration>
+		   </plugin>
+		   <plugin>
+			   <artifactId>maven-assembly-plugin</artifactId>
+			   <configuration>
+				   <archive>
+					   <manifest>
+						   <mainClass>${main.class}</mainClass>
+					   </manifest>
+				   </archive>
+				   <descriptorRefs>
+					   <descriptorRef>jar-with-dependencies</descriptorRef>
+				   </descriptorRefs>
+			   </configuration>
+			   <executions>
+				   <execution>
+					   <id>make-assembly</id> <!-- this is used for inheritance merges -->
+					   <phase>package</phase> <!-- bind to the packaging phase -->
+					   <goals>
+						   <goal>single</goal>
+					   </goals>
+				   </execution>
+			   </executions>
+		   </plugin>
+	   </plugins>
+   </build>
+</project>
