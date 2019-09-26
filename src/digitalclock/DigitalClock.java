@@ -119,7 +119,12 @@ public class DigitalClock extends Application {
         
         root.getStylesheets().add(getClass().getResource("progress.css").toExternalForm());
         
-        Scene scene = new Scene(root, 480, 412);
+        int w = (480 / puzzleRows) * puzzleRows;
+        int h = (412 / puzzleColumns) * puzzleColumns;
+        System.out.println("w:"+w+" ;h:"+h);
+        
+        Scene scene = new Scene(root, w, h);
+        
         // add background image
         background = new ImageView(new Image(getClass().getResourceAsStream("DigitalClock-background.png")));
         hiddenbackground = new ImageView(new Image(getClass().getResourceAsStream("finish.jpg"), 480, 412, false, true));
