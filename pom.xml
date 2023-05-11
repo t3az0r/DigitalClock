@@ -11,7 +11,7 @@ by: William Siqueira
 	<!-- change it according your app configuration -->
 	<groupId>org.kacie</groupId>
 	<artifactId>digitalclock</artifactId>
-	<version>10.1</version>
+	<version>11.1</version>
 	<properties>
 		<!-- The final name for the JAR that you can find in target directory-->
 		<jar.final.name>DigitalClock_v${version}</jar.final.name>
@@ -28,6 +28,12 @@ by: William Siqueira
    -->
    </dependencies>
    <build>
+       <resources>
+           <resource>
+               <directory>src/main/resources</directory>
+               <filtering>true</filtering>
+           </resource>
+       </resources>
 	   <finalName>${jar.final.name}</finalName>
 	   <plugins>
 		   <plugin>
